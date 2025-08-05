@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -18,20 +19,29 @@ import { useToast } from "@/hooks/use-toast";
 import { MessageSquareText, Loader2, ArrowRight } from "lucide-react";
 import type { Transaction } from "@/ai/flows/extract-transactions-from-text";
 
-export default function SmsImporter() {
+interface SmsImporterProps {
+    onTransactionsExtracted: (transactions: Transaction[]) => void;
+}
+
+export default function SmsImporter({ onTransactionsExtracted }: SmsImporterProps) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [transactions, setTransactions] = useState<Transaction[] | null>(null);
+  const [extractedTransactions, setExtractedTransactions] = useState<Transaction[] | null>(null);
   const { toast } = useToast();
 
   const handleExtract = async () => {
     setLoading(true);
-    setTransactions(null);
+    setExtractedTransactions(null);
     try {
       const result = await extractTransactionsAction(text);
       if (result.success && result.transactions) {
-        setTransactions(result.transactions);
-        if (result.transactions.length === 0) {
+        if (result.transactions.length > 0) {
+          setExtractedTransactions(result.transactions);
+           toast({
+            title: "Transactions Extracted!",
+            description: `Successfully found ${result.transactions.length} transaction(s). Click Add to import them.`,
+          });
+        } else {
           toast({
             title: "No Transactions Found",
             description: "The AI couldn't find any transactions in the text provided.",
@@ -55,6 +65,19 @@ export default function SmsImporter() {
     }
   };
 
+  const handleAddTransactions = () => {
+    if (extractedTransactions) {
+      onTransactionsExtracted(extractedTransactions);
+      toast({
+        title: "Success",
+        description: `${extractedTransactions.length} transaction(s) have been added.`,
+      });
+      // Clear the state after adding
+      setExtractedTransactions(null);
+      setText("");
+    }
+  };
+
   return (
     <Card className="shadow-sm h-full flex flex-col">
       <CardHeader>
@@ -68,19 +91,19 @@ export default function SmsImporter() {
       </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4">
         <Textarea
-          placeholder="Paste SMS messages or other transaction texts here..."
+          placeholder="Paste SMS messages or other transaction texts here... e.g., 'spent 450 on groceries'"
           className="h-32"
           value={text}
           onChange={(e) => setText(e.target.value)}
           disabled={loading}
         />
-        {transactions && (
+        {extractedTransactions && (
           <div className="flex-grow">
-            <h4 className="text-sm font-medium mb-2">Extracted Transactions:</h4>
+            <h4 className="text-sm font-medium mb-2">Extracted Transactions (Preview):</h4>
             <ScrollArea className="h-40 rounded-md border">
               <div className="p-4 text-sm">
-                {transactions.length > 0 ? (
-                  transactions.map((tx, index) => (
+                {extractedTransactions.length > 0 ? (
+                  extractedTransactions.map((tx, index) => (
                     <div key={index}>
                       <div className="flex justify-between items-center py-2">
                         <div>
@@ -91,7 +114,7 @@ export default function SmsImporter() {
                           {tx.type === 'debit' ? '-' : '+'}₹{tx.amount.toFixed(2)}
                         </p>
                       </div>
-                      {index < transactions.length - 1 && <Separator />}
+                      {index < extractedTransactions.length - 1 && <Separator />}
                     </div>
                   ))
                 ) : (
@@ -102,7 +125,7 @@ export default function SmsImporter() {
           </div>
         )}
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex justify-between">
         <Button onClick={handleExtract} disabled={loading || !text}>
           {loading ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -111,6 +134,11 @@ export default function SmsImporter() {
           )}
           {loading ? "Extracting..." : "Extract Transactions"}
         </Button>
+        {extractedTransactions && extractedTransactions.length > 0 && (
+          <Button onClick={handleAddTransactions}>
+            Add {extractedTransactions.length} Transaction(s)
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

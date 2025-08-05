@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   Wallet,
   TrendingUp,
@@ -21,6 +21,7 @@ import TransactionList from "@/components/dashboard/transaction-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ChartConfig } from "@/components/ui/chart";
 import SmsImporter from "@/components/dashboard/sms-importer";
+import { Transaction as ExtractedTransaction } from "@/ai/flows/extract-transactions-from-text";
 
 interface Transaction {
   id: string;
@@ -87,6 +88,8 @@ const iconMap: { [key: string]: LucideIcon } = {
   Daily: ShoppingBag,
   Other: ShoppingBag,
   Income: TrendingUp,
+  Transport: ShoppingBag,
+  Snacks: Utensils,
 };
 
 const categoryColorMap: { [key: string]: string } = {
@@ -164,21 +167,16 @@ export default function DashboardPage() {
   const chartConfig = useMemo(() => {
     const config: ChartConfig = { value: { label: "Value" } };
     const availableColors = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"];
-    const usedColors = new Set(Object.values(categoryColorMap));
-    
+    let colorIndex = 0;
+
     chartData.forEach((item) => {
       let colorVar: string;
       if (categoryColorMap[item.category]) {
         colorVar = categoryColorMap[item.category];
       } else {
-        const unusedColor = availableColors.find(c => !usedColors.has(c));
-        if (unusedColor) {
-            colorVar = unusedColor;
-            usedColors.add(unusedColor);
-        } else {
-            // Fallback if all colors are used
-            colorVar = availableColors[Math.floor(Math.random() * availableColors.length)];
-        }
+        // Assign a new color from the available list, cycling if necessary
+        colorVar = availableColors[colorIndex % availableColors.length];
+        colorIndex++;
       }
       
       config[item.category] = {
@@ -194,19 +192,35 @@ export default function DashboardPage() {
     ? Math.round((summary.totalExpenses / summary.totalIncome) * 100)
     : 0;
 
-  const handleAddTransaction = (newTx: Omit<Transaction, 'id' | 'type' | 'icon'> & {type?: 'debit' | 'credit'}) => {
+  const handleAddTransaction = useCallback((newTx: Omit<Transaction, 'id' | 'type' | 'icon'> & {type?: 'debit' | 'credit'}) => {
+    const category = newTx.category || "Other";
     const fullTransaction: Transaction = {
       ...newTx,
       id: new Date().toISOString(),
-      type: newTx.category === 'Income' ? 'credit' : 'debit',
-      icon: iconMap[newTx.category] || ShoppingBag,
+      type: newTx.type || (category === 'Income' ? 'credit' : 'debit'),
+      category,
+      icon: iconMap[category] || ShoppingBag,
     };
     setTransactions(prev => [fullTransaction, ...prev]);
-  };
+  }, []);
   
-  const handleDeleteTransaction = (id: string) => {
+  const handleDeleteTransaction = useCallback((id: string) => {
     setTransactions(prev => prev.filter(tx => tx.id !== id));
-  };
+  }, []);
+
+  const handleAddMultipleTransactions = useCallback((newTransactions: ExtractedTransaction[]) => {
+    const fullTransactions: Transaction[] = newTransactions.map(newTx => {
+      const category = newTx.merchant.charAt(0).toUpperCase() + newTx.merchant.slice(1);
+      return {
+      ...newTx,
+      id: new Date().toISOString() + Math.random(),
+      type: newTx.type,
+      category: category,
+      icon: iconMap[category] || ShoppingBag,
+      };
+  });
+    setTransactions(prev => [...fullTransactions, ...prev]);
+  }, []);
 
 
   return (
@@ -250,12 +264,11 @@ export default function DashboardPage() {
               transactions={transactions} 
               onAddTransaction={handleAddTransaction}
               onDeleteTransaction={handleDeleteTransaction}
-              iconMap={iconMap}
             />
           </div>
         </div>
 
-        <SmsImporter />
+        <SmsImporter onTransactionsExtracted={handleAddMultipleTransactions} />
       </main>
     </div>
   );
