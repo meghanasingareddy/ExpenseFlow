@@ -110,13 +110,13 @@ export default function SmsImporter({ onTransactionsExtracted }: SmsImporterProp
           <span>Import from Text</span>
         </CardTitle>
         <CardDescription>
-          Paste messages like 'Paid ₹550 to Swiggy on 3rd August' to automatically add transactions.
+          Write messages like 'Paid ₹550 to Swiggy on 3rd August' to automatically add transactions.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4">
         <Textarea
           id="messageInput"
-          placeholder="Paid ₹550 to Swiggy on 3rd August..."
+          placeholder="Write message here... e.g., Paid ₹550 to Swiggy on 3rd August"
           className="h-32"
           value={text}
           onChange={(e) => setText(e.target.value)}
