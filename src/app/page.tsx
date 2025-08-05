@@ -35,7 +35,6 @@ import TransactionList from "@/components/dashboard/transaction-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ChartConfig } from "@/components/ui/chart";
 import SmsImporter from "@/components/dashboard/sms-importer";
-import { Transaction as ExtractedTransaction } from "@/ai/flows/extract-transactions-from-text";
 
 interface Transaction {
   id: string;
@@ -119,14 +118,15 @@ const iconMap: { [key: string]: LucideIcon } = {
   "Fast Food": Salad,
   Salon: Scissors,
   "Gift Shop": Gift,
+  Swiggy: Utensils,
 };
 
 const categoryColorMap: { [key: string]: string } = {
   Rent: "chart-2",
   Groceries: "chart-1",
   Food: "chart-3",
-  Entertainment: "chart-5",
-  Health: "chart-4",
+  Entertainment: "chart-4",
+  Health: "chart-5",
 };
 
 
@@ -239,15 +239,13 @@ export default function DashboardPage() {
     setTransactions(prev => prev.filter(tx => tx.id !== id));
   }, []);
 
-  const handleAddMultipleTransactions = useCallback((newTransactions: ExtractedTransaction[]) => {
+  const handleAddMultipleTransactions = useCallback((newTransactions: (Omit<Transaction, 'id' | 'type' | 'icon' | 'place'> & { place: string, category: string })[]) => {
     const fullTransactions: Transaction[] = newTransactions.map(newTx => {
-      const category = newTx.place.charAt(0).toUpperCase() + newTx.place.slice(1);
       return {
       ...newTx,
       id: new Date().toISOString() + Math.random(),
-      type: newTx.type,
-      category: category,
-      icon: iconMap[category] || ShoppingBag,
+      type: 'debit', // Assume debit for extracted transactions
+      icon: iconMap[newTx.category] || ShoppingBag,
       };
   });
     setTransactions(prev => [...fullTransactions, ...prev]);
