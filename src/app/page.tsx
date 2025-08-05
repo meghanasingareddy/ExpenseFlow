@@ -15,69 +15,100 @@ import SpendingChart from "@/components/dashboard/spending-chart";
 import TransactionList from "@/components/dashboard/transaction-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AIInsights from "@/components/dashboard/ai-insights";
+import type { ChartConfig } from "@/components/ui/chart";
 
 export default function DashboardPage() {
   const summaryData = [
     {
       icon: Wallet,
       title: "Total Balance",
-      value: "₹1,028,805.59",
+      value: "₹120,500.00",
       subtitle: "+2.5% from last month",
     },
     {
       icon: TrendingUp,
       title: "Income",
-      value: "₹400,000.00",
+      value: "₹50,000.00",
       subtitle: "Monthly salary",
     },
     {
       icon: TrendingDown,
       title: "Expenses",
-      value: "₹151,234.40",
+      value: "₹40,000.00",
       subtitle: "-10.1% from last month",
     },
   ];
 
   const chartData = [
-    { category: "Groceries", value: 32000, fill: "var(--chart-1)" },
-    { category: "Rent", value: 120000, fill: "var(--chart-2)" },
-    { category: "Entertainment", value: 20000, fill: "var(--chart-3)" },
-    { category: "Transport", value: 12000, fill: "var(--chart-4)" },
-    { category: "Utilities", value: 16000, fill: "var(--chart-5)" },
+    { category: "Groceries", value: 8000 },
+    { category: "Rent", value: 20000 },
+    { category: "Entertainment", value: 5000 },
+    { category: "Transport", value: 3000 },
+    { category: "Utilities", value: 4000 },
   ];
+
+  const chartConfig = {
+    value: {
+      label: "Value",
+    },
+    Groceries: {
+      label: "Groceries",
+      color: "hsl(var(--chart-1))",
+    },
+    Rent: {
+      label: "Rent",
+      color: "hsl(var(--chart-2))",
+    },
+    Entertainment: {
+      label: "Entertainment",
+      color: "hsl(var(--chart-3))",
+    },
+    Transport: {
+      label: "Transport",
+      color: "hsl(var(--chart-4))",
+    },
+    Utilities: {
+      label: "Utilities",
+      color: "hsl(var(--chart-5))",
+    },
+  } satisfies ChartConfig
 
   const transactionData = [
     {
       icon: ShoppingBag,
       title: "Grocery Store",
       date: "2024-07-25",
-      value: "-₹6,280.00",
+      value: "-₹2,500.00",
     },
     {
       icon: Utensils,
       title: "Restaurant",
       date: "2024-07-24",
-      value: "-₹3,616.00",
+      value: "-₹1,200.00",
     },
     {
       icon: Clapperboard,
       title: "Movie Tickets",
       date: "2024-07-23",
-      value: "-₹2,400.00",
+      value: "-₹800.00",
     },
     {
       icon: Home,
       title: "Rent Payment",
       date: "2024-07-22",
-      value: "-₹96,000.00",
+      value: "-₹20,000.00",
     },
     {
       icon: Heart,
       title: "Pharmacy",
       date: "2024-07-21",
-      value: "-₹1,820.00",
+      value: "-₹500.00",
     },
   ];
+
+  const totalExpenses = chartData.reduce((acc, curr) => acc + curr.value, 0);
+  const totalIncome = 50000;
+  const budgetUsage = Math.round((totalExpenses / totalIncome) * 100);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
@@ -102,9 +133,9 @@ export default function DashboardPage() {
                 <CardTitle>Spending Breakdown</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-6">
-                <BudgetProgress value={65} />
+                <BudgetProgress value={budgetUsage} />
                 <div className="h-[280px] w-full">
-                  <SpendingChart data={chartData} />
+                  <SpendingChart data={chartData} config={chartConfig} />
                 </div>
               </CardContent>
             </Card>

@@ -14,19 +14,14 @@ interface SpendingChartProps {
   data: {
     category: string;
     value: number;
-    fill: string;
   }[];
+  config: ChartConfig;
 }
 
-export default function SpendingChart({ data }: SpendingChartProps) {
-  const chartConfig = data.reduce((acc, item) => {
-    acc[item.category] = { label: item.category };
-    return acc;
-  }, {} as ChartConfig);
-
+export default function SpendingChart({ data, config }: SpendingChartProps) {
   return (
     <ChartContainer
-      config={chartConfig}
+      config={config}
       className="mx-auto aspect-square max-h-[280px]"
     >
       <PieChart>
@@ -44,7 +39,7 @@ export default function SpendingChart({ data }: SpendingChartProps) {
           {data.map((entry) => (
             <Cell
               key={entry.category}
-              fill={entry.fill}
+              fill={`var(--color-${entry.category})`}
               className="outline-none ring-0 focus:outline-none"
             />
           ))}

@@ -6,15 +6,15 @@ import { getSpendingInsights, type SpendingInsightsInput } from "@/ai/flows/spen
 export async function getAIInsightsAction() {
   // In a real app, this data would come from the user's actual financial data.
   const input: SpendingInsightsInput = {
-    income: 400000,
+    income: 50000,
     expenses: [
-      { category: "Groceries", amount: 32000 },
-      { category: "Rent", amount: 120000 },
-      { category: "Entertainment", amount: 20000 },
-      { category: "Transport", amount: 12000 },
-      { category: "Utilities", amount: 16000 },
+      { category: "Groceries", amount: 8000 },
+      { category: "Rent", amount: 20000 },
+      { category: "Entertainment", amount: 5000 },
+      { category: "Transport", amount: 3000 },
+      { category: "Utilities", amount: 4000 },
     ],
-    savingsGoal: 80000,
+    savingsGoal: 10000,
   };
 
   try {
