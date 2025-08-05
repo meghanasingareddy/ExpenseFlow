@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { PlusCircle, Trash2, ShoppingBag, Utensils, Clapperboard, Home, Heart, TrendingUp } from "lucide-react";
+import { PlusCircle, Trash2, ShoppingBag, Utensils, Clapperboard, Home, Heart, TrendingUp, Car, Book, Store, Smartphone, Laptop, Bolt, PenSquare, Dumbbell, GraduationCap, School, Youtube, Salad, Scissors, Gift } from "lucide-react";
 import AddTransactionDialog from "./add-transaction-dialog";
 import Link from 'next/link';
 import {
@@ -30,7 +30,7 @@ import {
 
 interface Transaction {
   id: string;
-  merchant: string;
+  place: string;
   date: string;
   amount: number;
   type: 'debit' | 'credit';
@@ -53,8 +53,23 @@ const iconMap: { [key: string]: LucideIcon } = {
   Daily: ShoppingBag,
   Default: ShoppingBag,
   Income: TrendingUp,
-  Transport: ShoppingBag,
+  Transport: Car,
   Snacks: Utensils,
+  Medical: Heart,
+  Bookstore: Book,
+  Pharmacy: Store,
+  Recharge: Smartphone,
+  "Online Shopping": Laptop,
+  "Electricity Bill": Bolt,
+  Stationery: PenSquare,
+  Gym: Dumbbell,
+  Tuition: GraduationCap,
+  Canteen: School,
+  "Hostel Fees": School,
+  "Streaming Subscription": Youtube,
+  "Fast Food": Salad,
+  Salon: Scissors,
+  "Gift Shop": Gift,
 };
 
 
@@ -103,7 +118,7 @@ export default function TransactionList({
                       </div>
                       <div className="ml-4 flex-grow space-y-1">
                         <p className="text-sm font-medium leading-none">
-                          {transaction.merchant}
+                          {transaction.place}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {transaction.date}

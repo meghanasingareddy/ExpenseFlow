@@ -2,7 +2,7 @@
 "use server";
 
 import { extractTransactionsFromText, type Transaction } from "@/ai/flows/extract-transactions-from-text";
-import { suggestMerchants, type SuggestMerchantsInput } from "@/ai/flows/suggest-merchants";
+import { suggestPlaces, type SuggestPlacesInput } from "@/ai/flows/suggest-merchants";
 
 export async function extractTransactionsAction(text: string): Promise<{ success: boolean, transactions?: Transaction[], error?: string }> {
   if (!text) {
@@ -18,10 +18,10 @@ export async function extractTransactionsAction(text: string): Promise<{ success
   }
 }
 
-export async function suggestMerchantsAction(input: SuggestMerchantsInput): Promise<{ success: boolean, merchants?: string[], error?: string }> {
+export async function suggestPlacesAction(input: SuggestPlacesInput): Promise<{ success: boolean, places?: string[], error?: string }> {
   try {
-    const result = await suggestMerchants(input);
-    return { success: true, merchants: result.merchants };
+    const result = await suggestPlaces(input);
+    return { success: true, places: result.places };
   } catch (error) {
     console.error(error);
     return { success: false, error: "Failed to suggest merchants." };

@@ -41,7 +41,7 @@ import AddTransactionDialog from "@/components/dashboard/add-transaction-dialog"
 const allTransactions = [
   {
     id: "1",
-    merchant: "Grocery Store",
+    place: "Grocery Store",
     amount: 2500,
     type: "debit",
     date: "2024-07-25",
@@ -49,7 +49,7 @@ const allTransactions = [
   },
   {
     id: "2",
-    merchant: "Restaurant",
+    place: "Restaurant",
     amount: 1200,
     type: "debit",
     date: "2024-07-24",
@@ -57,7 +57,7 @@ const allTransactions = [
   },
   {
     id: "3",
-    merchant: "Movie Tickets",
+    place: "Movie Tickets",
     amount: 800,
     type: "debit",
     date: "2024-07-23",
@@ -65,7 +65,7 @@ const allTransactions = [
   },
   {
     id: "4",
-    merchant: "Rent Payment",
+    place: "Rent Payment",
     amount: 10000,
     type: "debit",
     date: "2024-07-22",
@@ -73,7 +73,7 @@ const allTransactions = [
   },
   {
     id: "5",
-    merchant: "Pharmacy",
+    place: "Pharmacy",
     amount: 500,
     type: "debit",
     date: "2024-07-21",
@@ -81,7 +81,7 @@ const allTransactions = [
   },
   {
     id: "6",
-    merchant: "Salary",
+    place: "Salary",
     amount: 25000,
     type: "credit",
     date: "2024-07-20",
@@ -89,7 +89,7 @@ const allTransactions = [
   },
   {
     id: "7",
-    merchant: "Online Shopping",
+    place: "Online Shopping",
     amount: 3000,
     type: "debit",
     date: "2024-07-19",
@@ -97,7 +97,7 @@ const allTransactions = [
   },
   {
     id: "8",
-    merchant: "Daily Commute",
+    place: "Daily Commute",
     amount: 150,
     type: "debit",
     date: "2024-07-25",
@@ -112,7 +112,7 @@ export default function TransactionsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [filter, setFilter] = useState("all");
 
-  const handleAddTransaction = (newTx: Omit<Transaction, 'id' | 'type'> & { merchant: string }) => {
+  const handleAddTransaction = (newTx: Omit<Transaction, 'id' | 'type'> & { place: string }) => {
     const newTransaction: Transaction = {
       ...newTx,
       id: new Date().toISOString(),
@@ -187,7 +187,7 @@ export default function TransactionsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Merchant</TableHead>
+                    <TableHead>Place</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead className="text-right">Amount</TableHead>
                     <TableHead>Date</TableHead>
@@ -200,7 +200,7 @@ export default function TransactionsPage() {
                   {filteredTransactions.map((tx) => (
                     <TableRow key={tx.id}>
                       <TableCell className="font-medium">
-                        {tx.merchant}
+                        {tx.place}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">{tx.category}</Badge>

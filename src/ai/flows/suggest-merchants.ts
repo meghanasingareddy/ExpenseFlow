@@ -2,57 +2,57 @@
 'use server';
 
 /**
- * @fileOverview An AI flow for suggesting merchant names based on user input.
+ * @fileOverview An AI flow for suggesting place names based on user input.
  * 
- * - suggestMerchants - A function that provides merchant suggestions.
- * - SuggestMerchantsInput - The input type for the suggestion flow.
- * - SuggestMerchantsOutput - The output type for the suggestion flow.
+ * - suggestPlaces - A function that provides place suggestions.
+ * - SuggestPlacesInput - The input type for the suggestion flow.
+ * - SuggestPlacesOutput - The output type for the suggestion flow.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
-const SuggestMerchantsInputSchema = z.object({
-  query: z.string().describe('The partial merchant name entered by the user.'),
+const SuggestPlacesInputSchema = z.object({
+  query: z.string().describe('The partial place name entered by the user.'),
   count: z.number().optional().default(3).describe('The number of suggestions to return.'),
 });
 
-export type SuggestMerchantsInput = z.infer<typeof SuggestMerchantsInputSchema>;
+export type SuggestPlacesInput = z.infer<typeof SuggestPlacesInputSchema>;
 
-const SuggestMerchantsOutputSchema = z.object({
-  merchants: z.array(z.string()).describe('An array of suggested merchant names.'),
+const SuggestPlacesOutputSchema = z.object({
+  places: z.array(z.string()).describe('An array of suggested place names.'),
 });
 
-export type SuggestMerchantsOutput = z.infer<typeof SuggestMerchantsOutputSchema>;
+export type SuggestPlacesOutput = z.infer<typeof SuggestPlacesOutputSchema>;
 
-export async function suggestMerchants(input: SuggestMerchantsInput): Promise<SuggestMerchantsOutput> {
+export async function suggestPlaces(input: SuggestPlacesInput): Promise<SuggestPlacesOutput> {
     const prompt = ai.definePrompt({
-    name: 'suggestMerchantsPrompt',
+    name: 'suggestPlacesPrompt',
     input: {
-      schema: SuggestMerchantsInputSchema,
+      schema: SuggestPlacesInputSchema,
     },
     output: {
-      schema: SuggestMerchantsOutputSchema,
+      schema: SuggestPlacesOutputSchema,
     },
-    prompt: `Based on the user's input query: "{{query}}", suggest {{count}} potential full merchant names. These are for an expense tracking app.
+    prompt: `Based on the user's input query: "{{query}}", suggest {{count}} potential full place names. These are for an expense tracking app.
   
   Examples:
   - query: "starb" -> suggestions: ["Starbucks", "Star Bazaar"]
   - query: "ama" -> suggestions: ["Amazon", "Amato's", "Amara"]
   
-  Provide only the list of names.`,
+  Return a JSON object with a "places" key containing the list of names.`,
     });
 
-    const suggestMerchantsFlow = ai.defineFlow(
+    const suggestPlacesFlow = ai.defineFlow(
     {
-        name: 'suggestMerchantsFlow',
-        inputSchema: SuggestMerchantsInputSchema,
-        outputSchema: SuggestMerchantsOutputSchema,
+        name: 'suggestPlacesFlow',
+        inputSchema: SuggestPlacesInputSchema,
+        outputSchema: SuggestPlacesOutputSchema,
     },
     async (input) => {
         const { output } = await prompt(input);
         return output!;
     }
     );
-  return suggestMerchantsFlow(input);
+  return suggestPlacesFlow(input);
 }

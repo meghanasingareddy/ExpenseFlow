@@ -11,6 +11,20 @@ import {
   Clapperboard,
   Home,
   Heart,
+  Book,
+  Store,
+  Smartphone,
+  Car,
+  Laptop,
+  Bolt,
+  PenSquare,
+  Dumbbell,
+  GraduationCap,
+  School,
+  Youtube,
+  Salad,
+  Scissors,
+  Gift,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Header from "@/components/dashboard/header";
@@ -25,7 +39,7 @@ import { Transaction as ExtractedTransaction } from "@/ai/flows/extract-transact
 
 interface Transaction {
   id: string;
-  merchant: string;
+  place: string;
   amount: number;
   date: string;
   category: string;
@@ -35,42 +49,42 @@ interface Transaction {
 
 const initialTransactions: Omit<Transaction, 'icon' | 'id'>[] = [
     {
-      merchant: "Grocery Store",
+      place: "Grocery Store",
       amount: 2500,
       type: "debit",
       date: "2024-07-25",
       category: "Groceries",
     },
     {
-      merchant: "Restaurant",
+      place: "Restaurant",
       amount: 1200,
       type: "debit",
       date: "2024-07-24",
       category: "Food",
     },
     {
-      merchant: "Movie Tickets",
+      place: "Movie Tickets",
       amount: 800,
       type: "debit",
       date: "2024-07-23",
       category: "Entertainment",
     },
     {
-      merchant: "Rent Payment",
+      place: "Rent Payment",
       amount: 10000,
       type: "debit",
       date: "2024-07-22",
       category: "Rent",
     },
     {
-      merchant: "Pharmacy",
+      place: "Pharmacy",
       amount: 500,
       type: "debit",
       date: "2024-07-21",
       category: "Health",
     },
     {
-      merchant: "Salary",
+      place: "Salary",
       amount: 25000,
       type: "credit",
       date: "2024-07-20",
@@ -88,8 +102,23 @@ const iconMap: { [key: string]: LucideIcon } = {
   Daily: ShoppingBag,
   Default: ShoppingBag,
   Income: TrendingUp,
-  Transport: ShoppingBag,
+  Transport: Car,
   Snacks: Utensils,
+  Medical: Heart,
+  Bookstore: Book,
+  Pharmacy: Store,
+  Recharge: Smartphone,
+  "Online Shopping": Laptop,
+  "Electricity Bill": Bolt,
+  Stationery: PenSquare,
+  Gym: Dumbbell,
+  Tuition: GraduationCap,
+  Canteen: School,
+  "Hostel Fees": School,
+  "Streaming Subscription": Youtube,
+  "Fast Food": Salad,
+  Salon: Scissors,
+  "Gift Shop": Gift,
 };
 
 const categoryColorMap: { [key: string]: string } = {
@@ -167,28 +196,24 @@ export default function DashboardPage() {
   const chartConfig = useMemo(() => {
     const config: ChartConfig = { value: { label: "Value" } };
     const availableColors = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"];
-    
-    // Get colors that are already used by the predefined categories
-    const usedColors = new Set(Object.values(categoryColorMap));
-    
-    // Filter available colors to only include those not already used
-    const remainingColors = availableColors.filter(color => !usedColors.has(color));
     let colorIndex = 0;
 
     chartData.forEach((item) => {
-      let colorVar: string;
-      if (categoryColorMap[item.category]) {
-        colorVar = categoryColorMap[item.category];
-      } else {
-        // Assign a new color from the remaining list, cycling if necessary
-        colorVar = remainingColors[colorIndex % remainingColors.length];
-        colorIndex++;
+      if (!config[item.category]) {
+        let colorVar = categoryColorMap[item.category];
+        if (!colorVar) {
+          // Get colors that are already used by the predefined categories
+          const usedColors = new Set(Object.values(categoryColorMap));
+          // Filter available colors to only include those not already used
+          const remainingColors = availableColors.filter(color => !usedColors.has(color));
+          colorVar = remainingColors[colorIndex % remainingColors.length] || availableColors[colorIndex % availableColors.length];
+          colorIndex++;
+        }
+        config[item.category] = {
+          label: item.category,
+          color: `hsl(var(--${colorVar}))`,
+        };
       }
-      
-      config[item.category] = {
-        label: item.category,
-        color: `hsl(var(--${colorVar}))`,
-      };
     });
     return config;
   }, [chartData]);
@@ -216,7 +241,7 @@ export default function DashboardPage() {
 
   const handleAddMultipleTransactions = useCallback((newTransactions: ExtractedTransaction[]) => {
     const fullTransactions: Transaction[] = newTransactions.map(newTx => {
-      const category = newTx.merchant.charAt(0).toUpperCase() + newTx.merchant.slice(1);
+      const category = newTx.place.charAt(0).toUpperCase() + newTx.place.slice(1);
       return {
       ...newTx,
       id: new Date().toISOString() + Math.random(),

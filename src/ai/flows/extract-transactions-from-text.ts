@@ -15,7 +15,7 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const TransactionSchema = z.object({
-  merchant: z.string().describe('The name of the merchant or a description of the expense, like "groceries" or "transport".'),
+  place: z.string().describe('The name of the place or a description of the expense, like "groceries" or "transport".'),
   amount: z.number().describe('The monetary value of the transaction.'),
   date: z.string().describe('The date of the transaction in YYYY-MM-DD format.'),
   type: z.enum(['debit', 'credit']).describe('The type of transaction (debit or credit).'),
@@ -24,7 +24,7 @@ const TransactionSchema = z.object({
 export type Transaction = z.infer<typeof TransactionSchema>;
 
 const ExtractTransactionsInputSchema = z.object({
-  text: z.string().describe('A block of text, potentially containing one or more transaction descriptions, like from an SMS message or user input.'),
+  text: z.string().describe('A block of text, a single SMS, or multiple messages, potentially containing one or more transaction descriptions.'),
 });
 
 export type ExtractTransactionsInput = z.infer<typeof ExtractTransactionsInputSchema>;
@@ -44,20 +44,26 @@ export async function extractTransactionsFromText(input: ExtractTransactionsInpu
     output: {
       schema: ExtractTransactionsOutputSchema,
     },
-    prompt: `You are an expert at parsing financial text. Analyze the following text and extract all transaction details. Today's date is {{currentDate}}.
+    prompt: `You are an expert at parsing financial text and SMS messages. Analyze the following text and extract all transaction details. Today's date is {{currentDate}}.
 
 Your task is to extract transactions from the user's text. For each transaction, you must identify:
-1.  **Merchant/Description**: The name of the merchant, or a category like "Groceries", "Transport". If no merchant or category is mentioned, use "Default".
-2.  **Amount**: The numeric value of the transaction.
+1.  **Place/Description**: The name of the place or service (e.g., 'Groceries', 'Amazon', 'XYZ'). If no place or category is mentioned, use "Default".
+2.  **Amount**: The numeric value of the transaction. Look for currency symbols like '₹' or 'Rs.'.
 3.  **Date**: The date of the transaction. If no date is mentioned, use today's date ({{currentDate}}). The format must be YYYY-MM-DD.
 4.  **Type**: Determine if it's a 'debit' (money spent, paid, bought) or 'credit' (money received, salary).
 
-Example: "spent 450 on groceries" -> { merchant: "Groceries", amount: 450, date: "{{currentDate}}", type: "debit" }
-Example: "paid 200 for transport" -> { merchant: "Transport", amount: 200, date: "{{currentDate}}", type: "debit" }
-Example: "bought 300 snacks" -> { merchant: "Snacks", amount: 300, date: "{{currentDate}}", type: "debit" }
+Handle various formats:
+- "You spent ₹450 at Groceries" -> { place: "Groceries", amount: 450, date: "{{currentDate}}", type: "debit" }
+- "Rs. 250 at XYZ" -> { place: "XYZ", amount: 250, date: "{{currentDate}}", type: "debit" }
+- "₹600 from Amazon" -> { place: "Amazon", amount: 600, date: "{{currentDate}}", type: "debit" }
+- "paid 200 for transport" -> { place: "Transport", amount: 200, date: "{{currentDate}}", type: "debit" }
+- "bought 300 snacks" -> { place: "Snacks", amount: 300, date: "{{currentDate}}", type: "debit" }
 
-Even if the text is very simple, like "spent 500", do your best to fill in the details.
-Example: "spent 500" -> { merchant: "Default", amount: 500, date: "{{currentDate}}", type: "debit" }
+If the text contains multiple transactions, extract all of them.
+Example: "spent 450 on groceries paid 200 for transport bought 300 snacks" -> [{ place: "Groceries", amount: 450, date: "{{currentDate}}", type: "debit" }, { place: "Transport", amount: 200, date: "{{currentDate}}", type: "debit" }, { place: "Snacks", amount: 300, date: "{{currentDate}}", type: "debit" }]
+
+If the text is very simple, like "spent 500", do your best to fill in the details.
+Example: "spent 500" -> { place: "Default", amount: 500, date: "{{currentDate}}", type: "debit" }
 
 Text to analyze:
 {{{text}}}

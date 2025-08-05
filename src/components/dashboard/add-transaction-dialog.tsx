@@ -20,16 +20,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { suggestMerchantsAction } from "@/app/actions";
+import { suggestPlacesAction } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
 const categories = [
+  "Coffee Shop",
   "Groceries",
+  "Restaurant",
+  "Medical",
+  "Bookstore",
+  "Pharmacy",
+  "Recharge",
+  "Transport",
+  "Online Shopping",
+  "Electricity Bill",
+  "Stationery",
+  "Gym",
+  "Tuition",
+  "Canteen",
+  "Hostel Fees",
+  "Streaming Subscription",
+  "Fast Food",
+  "Salon",
+  "Gift Shop",
   "Food",
   "Rent",
   "Entertainment",
-  "Transport",
   "Utilities",
   "Health",
   "Shopping",
@@ -42,7 +59,7 @@ interface AddTransactionDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onAddTransaction: (transaction: {
-    merchant: string;
+    place: string;
     amount: number;
     date: string;
     category: string;
@@ -54,7 +71,7 @@ export default function AddTransactionDialog({
   onClose,
   onAddTransaction,
 }: AddTransactionDialogProps) {
-  const [merchant, setMerchant] = useState("");
+  const [place, setPlace] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [category, setCategory] = useState("");
@@ -62,15 +79,15 @@ export default function AddTransactionDialog({
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
-  const handleMerchantChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMerchant = e.target.value;
-    setMerchant(newMerchant);
+  const handlePlaceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPlace = e.target.value;
+    setPlace(newPlace);
 
-    if (newMerchant.length > 2) {
+    if (newPlace.length > 2) {
       startTransition(async () => {
-        const result = await suggestMerchantsAction({ query: newMerchant, count: 3 });
-        if (result.success && result.merchants) {
-          setSuggestions(result.merchants);
+        const result = await suggestPlacesAction({ query: newPlace, count: 3 });
+        if (result.success && result.places) {
+          setSuggestions(result.places);
         }
       });
     } else {
@@ -79,7 +96,7 @@ export default function AddTransactionDialog({
   };
 
   const handleSubmit = () => {
-    if (!merchant || !amount || !date || !category) {
+    if (!place || !amount || !date || !category) {
         toast({
             variant: "destructive",
             title: "Missing Fields",
@@ -88,13 +105,13 @@ export default function AddTransactionDialog({
         return;
     }
     onAddTransaction({
-      merchant,
+      place,
       amount: parseFloat(amount),
       date,
       category,
     });
     // Reset form and close
-    setMerchant("");
+    setPlace("");
     setAmount("");
     setDate(new Date().toISOString().split("T")[0]);
     setCategory("");
@@ -109,7 +126,7 @@ export default function AddTransactionDialog({
         setSuggestions([]);
       } else {
         // Reset form state when dialog opens
-        setMerchant("");
+        setPlace("");
         setAmount("");
         setDate(new Date().toISOString().split("T")[0]);
         setCategory("");
@@ -125,14 +142,14 @@ export default function AddTransactionDialog({
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4 relative">
-            <Label htmlFor="merchant" className="text-right">
-              Merchant
+            <Label htmlFor="place" className="text-right">
+              Place
             </Label>
             <div className="col-span-3">
               <Input
-                id="merchant"
-                value={merchant}
-                onChange={handleMerchantChange}
+                id="place"
+                value={place}
+                onChange={handlePlaceChange}
                 className="w-full"
                 placeholder="e.g., Coffee shop"
                 autoComplete="off"
@@ -145,7 +162,7 @@ export default function AddTransactionDialog({
                       key={i} 
                       className="px-3 py-2 text-sm cursor-pointer hover:bg-accent"
                       onClick={() => {
-                        setMerchant(s);
+                        setPlace(s);
                         setSuggestions([]);
                       }}
                     >
@@ -190,7 +207,7 @@ export default function AddTransactionDialog({
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((cat) => (
+                {categories.sort().map((cat) => (
                   <SelectItem key={cat} value={cat}>
                     {cat}
                   </SelectItem>
