@@ -32,7 +32,7 @@ export default function Header() {
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
         <div className="flex items-center gap-2">
           <IndianRupee className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-semibold tracking-tight">ExpenseWise</h1>
+          <h1 className="text-xl font-semibold tracking-tight">ExpenseFlow</h1>
         </div>
         <div className="flex items-center space-x-2">
            <Sun className="h-5 w-5 text-muted-foreground transition-colors" />
@@ -47,7 +47,7 @@ export default function Header() {
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
       <div className="flex items-center gap-2">
         <IndianRupee className="h-6 w-6 text-primary" />
-        <h1 className="text-xl font-semibold tracking-tight">ExpenseWise</h1>
+        <h1 className="text-xl font-semibold tracking-tight">ExpenseFlow</h1>
       </div>
       <div className="flex items-center space-x-2">
         <Sun className="h-5 w-5 text-muted-foreground transition-colors" />
