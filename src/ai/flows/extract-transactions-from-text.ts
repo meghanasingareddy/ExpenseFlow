@@ -44,14 +44,25 @@ export async function extractTransactionsFromText(input: ExtractTransactionsInpu
     output: {
       schema: ExtractTransactionsOutputSchema,
     },
-    prompt: `You are an expert at parsing financial text. Analyze the following text and extract all transaction details. For each transaction, identify the merchant or description, amount, date, and whether it was a debit (money spent) or credit (money received). Today is {{currentDate}}.
+    prompt: `You are an expert at parsing financial text. Analyze the following text and extract all transaction details. Today's date is {{currentDate}}.
 
-If a specific merchant name isn't available, use the category of the expense (e.g., "Groceries", "Transport", "Snacks") as the merchant name. Phrases like "spent", "paid for", or "bought" indicate a debit.
+Your task is to extract transactions from the user's text. For each transaction, you must identify:
+1.  **Merchant/Description**: The name of the merchant, or a category like "Groceries", "Transport". If no merchant or category is mentioned, use "Other".
+2.  **Amount**: The numeric value of the transaction.
+3.  **Date**: The date of the transaction. If no date is mentioned, use today's date ({{currentDate}}). The format must be YYYY-MM-DD.
+4.  **Type**: Determine if it's a 'debit' (money spent, paid, bought) or 'credit' (money received, salary).
 
-  Text to analyze:
-  {{{text}}}
+Example: "spent 450 on groceries" -> { merchant: "Groceries", amount: 450, date: "{{currentDate}}", type: "debit" }
+Example: "paid 200 for transport" -> { merchant: "Transport", amount: 200, date: "{{currentDate}}", type: "debit" }
+Example: "bought 300 snacks" -> { merchant: "Snacks", amount: 300, date: "{{currentDate}}", type: "debit" }
 
-  Return the data as a structured JSON object.
+Even if the text is very simple, like "spent 500", do your best to fill in the details.
+Example: "spent 500" -> { merchant: "Other", amount: 500, date: "{{currentDate}}", type: "debit" }
+
+Text to analyze:
+{{{text}}}
+
+Return the data as a structured JSON object.
   `,
   });
 
