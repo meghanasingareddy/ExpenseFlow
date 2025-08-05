@@ -86,7 +86,7 @@ const iconMap: { [key: string]: LucideIcon } = {
   Health: Heart,
   Shopping: ShoppingBag,
   Daily: ShoppingBag,
-  Other: ShoppingBag,
+  Default: ShoppingBag,
   Income: TrendingUp,
   Transport: ShoppingBag,
   Snacks: Utensils,
@@ -95,9 +95,9 @@ const iconMap: { [key: string]: LucideIcon } = {
 const categoryColorMap: { [key: string]: string } = {
   Rent: "chart-2",
   Groceries: "chart-1",
-  Food: "chart-4",
+  Food: "chart-3",
   Entertainment: "chart-5",
-  Health: "chart-3",
+  Health: "chart-4",
 };
 
 
@@ -167,6 +167,12 @@ export default function DashboardPage() {
   const chartConfig = useMemo(() => {
     const config: ChartConfig = { value: { label: "Value" } };
     const availableColors = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"];
+    
+    // Get colors that are already used by the predefined categories
+    const usedColors = new Set(Object.values(categoryColorMap));
+    
+    // Filter available colors to only include those not already used
+    const remainingColors = availableColors.filter(color => !usedColors.has(color));
     let colorIndex = 0;
 
     chartData.forEach((item) => {
@@ -174,8 +180,8 @@ export default function DashboardPage() {
       if (categoryColorMap[item.category]) {
         colorVar = categoryColorMap[item.category];
       } else {
-        // Assign a new color from the available list, cycling if necessary
-        colorVar = availableColors[colorIndex % availableColors.length];
+        // Assign a new color from the remaining list, cycling if necessary
+        colorVar = remainingColors[colorIndex % remainingColors.length];
         colorIndex++;
       }
       
@@ -193,7 +199,7 @@ export default function DashboardPage() {
     : 0;
 
   const handleAddTransaction = useCallback((newTx: Omit<Transaction, 'id' | 'type' | 'icon'> & {type?: 'debit' | 'credit'}) => {
-    const category = newTx.category || "Other";
+    const category = newTx.category || "Default";
     const fullTransaction: Transaction = {
       ...newTx,
       id: new Date().toISOString(),

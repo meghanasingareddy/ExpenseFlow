@@ -51,7 +51,7 @@ const iconMap: { [key: string]: LucideIcon } = {
   Health: Heart,
   Shopping: ShoppingBag,
   Daily: ShoppingBag,
-  Other: ShoppingBag,
+  Default: ShoppingBag,
   Income: TrendingUp,
   Transport: ShoppingBag,
   Snacks: Utensils,

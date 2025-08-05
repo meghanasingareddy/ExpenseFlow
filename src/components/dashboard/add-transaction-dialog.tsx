@@ -35,7 +35,7 @@ const categories = [
   "Shopping",
   "Daily",
   "Income",
-  "Other",
+  "Default",
 ];
 
 interface AddTransactionDialogProps {
