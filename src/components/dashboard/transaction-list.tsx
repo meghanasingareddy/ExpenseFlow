@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { PlusCircle, Trash2, ShoppingBag, Utensils, Clapperboard, Home, Heart, TrendingUp } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import AddTransactionDialog from "./add-transaction-dialog";
 import Link from 'next/link';
 import {
@@ -40,56 +40,19 @@ interface Transaction {
 }
 
 interface TransactionListProps {
-  transactions: {
-    id: string;
-    title: string;
-    date: string;
-    value: string;
-    category: string;
-  }[];
+  transactions: Transaction[];
+  onAddTransaction: (newTx: Omit<Transaction, 'id' | 'type' | 'icon'>) => void;
+  onDeleteTransaction: (id: string) => void;
+  iconMap: { [key: string]: LucideIcon };
 }
-
-const iconMap: { [key: string]: LucideIcon } = {
-  Groceries: ShoppingBag,
-  Food: Utensils,
-  Entertainment: Clapperboard,
-  Rent: Home,
-  Health: Heart,
-  Shopping: ShoppingBag,
-  Other: ShoppingBag,
-  Income: TrendingUp,
-};
 
 
 export default function TransactionList({
-  transactions: initialTransactions,
+  transactions,
+  onAddTransaction,
+  onDeleteTransaction
 }: TransactionListProps) {
-    const [transactions, setTransactions] = useState(
-    initialTransactions.map(t => ({
-      ...t,
-      // This is a bit of a hack to get the amount and type from the value string
-      amount: parseFloat(t.value.replace(/[^0-9.-]+/g,"")),
-      type: t.value.startsWith('-') ? 'debit' : 'credit' as 'debit' | 'credit',
-      merchant: t.title,
-      icon: iconMap[t.category] || ShoppingBag
-    }))
-  );
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-
-  const handleAddTransaction = (newTx: { merchant: string; amount: number; date: string; category: string; }) => {
-    const fullTransaction: Transaction = {
-      ...newTx,
-      id: new Date().toISOString(),
-      icon: iconMap[newTx.category] || ShoppingBag,
-      type: newTx.category === 'Income' ? 'credit' : 'debit',
-    };
-    setTransactions(prev => [fullTransaction, ...prev]);
-  };
-  
-  const handleDeleteTransaction = (id: string) => {
-    setTransactions(prev => prev.filter(tx => tx.id !== id));
-  };
-
 
   return (
     <>
@@ -139,7 +102,7 @@ export default function TransactionList({
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDeleteTransaction(transaction.id)}>
+                          <AlertDialogAction onClick={() => onDeleteTransaction(transaction.id)}>
                             Delete
                           </AlertDialogAction>
                         </AlertDialogFooter>
@@ -161,7 +124,7 @@ export default function TransactionList({
       <AddTransactionDialog
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
-        onAddTransaction={handleAddTransaction}
+        onAddTransaction={onAddTransaction}
       />
     </>
   );

@@ -95,6 +95,14 @@ const allTransactions = [
     date: "2024-07-19",
     category: "Shopping",
   },
+  {
+    id: "8",
+    merchant: "Daily Commute",
+    amount: 150,
+    type: "debit",
+    date: "2024-07-25",
+    category: "Daily",
+  },
 ];
 
 type Transaction = (typeof allTransactions)[0];

@@ -1,8 +1,18 @@
+
+"use client";
+
+import { useState, useEffect, useMemo } from "react";
 import {
   Wallet,
   TrendingUp,
   TrendingDown,
+  ShoppingBag,
+  Utensils,
+  Clapperboard,
+  Home,
+  Heart,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Header from "@/components/dashboard/header";
 import SummaryCard from "@/components/dashboard/summary-card";
 import BudgetProgress from "@/components/dashboard/budget-progress";
@@ -12,103 +22,168 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ChartConfig } from "@/components/ui/chart";
 import SmsImporter from "@/components/dashboard/sms-importer";
 
+interface Transaction {
+  id: string;
+  merchant: string;
+  amount: number;
+  date: string;
+  category: string;
+  type: 'debit' | 'credit';
+  icon: LucideIcon;
+}
+
+const initialTransactions: Omit<Transaction, 'icon' | 'id'>[] = [
+    {
+      merchant: "Grocery Store",
+      amount: 2500,
+      type: "debit",
+      date: "2024-07-25",
+      category: "Groceries",
+    },
+    {
+      merchant: "Restaurant",
+      amount: 1200,
+      type: "debit",
+      date: "2024-07-24",
+      category: "Food",
+    },
+    {
+      merchant: "Movie Tickets",
+      amount: 800,
+      type: "debit",
+      date: "2024-07-23",
+      category: "Entertainment",
+    },
+    {
+      merchant: "Rent Payment",
+      amount: 10000,
+      type: "debit",
+      date: "2024-07-22",
+      category: "Rent",
+    },
+    {
+      merchant: "Pharmacy",
+      amount: 500,
+      type: "debit",
+      date: "2024-07-21",
+      category: "Health",
+    },
+    {
+      merchant: "Salary",
+      amount: 25000,
+      type: "credit",
+      date: "2024-07-20",
+      category: "Income",
+    },
+];
+
+const iconMap: { [key: string]: LucideIcon } = {
+  Groceries: ShoppingBag,
+  Food: Utensils,
+  Entertainment: Clapperboard,
+  Rent: Home,
+  Health: Heart,
+  Shopping: ShoppingBag,
+  Daily: ShoppingBag,
+  Other: ShoppingBag,
+  Income: TrendingUp,
+};
+
+
 export default function DashboardPage() {
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    return initialTransactions.map((t, i) => ({
+      ...t,
+      id: `${i + 1}`,
+      icon: iconMap[t.category] || ShoppingBag,
+    }));
+  });
+
+  const summary = useMemo(() => {
+    const totalIncome = transactions
+      .filter(t => t.type === 'credit')
+      .reduce((acc, curr) => acc + curr.amount, 0);
+
+    const totalExpenses = transactions
+      .filter(t => t.type === 'debit')
+      .reduce((acc, curr) => acc + curr.amount, 0);
+      
+    const totalBalance = totalIncome - totalExpenses;
+
+    return { totalIncome, totalExpenses, totalBalance };
+  }, [transactions]);
+  
   const summaryData = [
     {
       icon: Wallet,
       title: "Total Balance",
-      value: "₹59,500",
+      value: `₹${summary.totalBalance.toLocaleString()}`,
       subtitle: "+2.5% from last month",
     },
     {
       icon: TrendingUp,
       title: "Income",
-      value: "₹25,000",
-      subtitle: "Monthly salary",
+      value: `₹${summary.totalIncome.toLocaleString()}`,
+      subtitle: "This month",
     },
     {
       icon: TrendingDown,
       title: "Expenses",
-      value: "₹15,500",
+      value: `₹${summary.totalExpenses.toLocaleString()}`,
       subtitle: "-10.1% from last month",
     },
   ];
 
-  const chartData = [
-    { category: "Groceries", value: 3500, label: "Groceries" },
-    { category: "Rent", value: 10000, label: "Rent" },
-    { category: "Entertainment", value: 1000, label: "Entertainment" },
-    { category: "Transport", value: 500, label: "Transport" },
-    { category: "Utilities", value: 500, label: "Utilities" },
-  ];
+  const chartData = useMemo(() => {
+    const expenseCategories = transactions
+      .filter(t => t.type === 'debit')
+      .reduce((acc, curr) => {
+        if (!acc[curr.category]) {
+          acc[curr.category] = 0;
+        }
+        acc[curr.category] += curr.amount;
+        return acc;
+      }, {} as Record<string, number>);
 
-  const chartConfig = {
-    value: {
-      label: "Value",
-    },
-    Groceries: {
-      label: "Groceries",
-      color: "hsl(var(--chart-1))",
-    },
-    Rent: {
-      label: "Rent",
-      color: "hsl(var(--chart-2))",
-    },
-    Entertainment: {
-      label: "Entertainment",
-      color: "hsl(var(--chart-3))",
-    },
-    Transport: {
-      label: "Transport",
-      color: "hsl(var(--chart-4))",
-    },
-    Utilities: {
-      label: "Utilities",
-      color: "hsl(var(--chart-5))",
-    },
-  } satisfies ChartConfig
+    return Object.entries(expenseCategories).map(([category, value]) => ({
+      category,
+      value,
+      label: category,
+    }));
+  }, [transactions]);
 
-  const transactionData = [
-    {
-      id: "1",
-      title: "Grocery Store",
-      date: "2024-07-25",
-      value: "-₹2,500",
-      category: "Groceries",
-    },
-    {
-      id: "2",
-      title: "Restaurant",
-      date: "2024-07-24",
-      value: "-₹1,200",
-      category: "Food",
-    },
-    {
-      id: "3",
-      title: "Movie Tickets",
-      date: "2024-07-23",
-      value: "-₹800",
-      category: "Entertainment",
-    },
-    {
-      id: "4",
-      title: "Rent Payment",
-      date: "2024-07-22",
-      value: "-₹10,000",
-      category: "Rent",
-    },
-    {
-      id: "5",
-      title: "Pharmacy",
-      date: "2024-07-21",
-      value: "-₹500",
-      category: "Health",
-    },
-  ];
 
-  const totalExpenses = chartData.reduce((acc, curr) => acc + curr.value, 0);
-  const totalIncome = 25000;
-  const budgetUsage = Math.round((totalExpenses / totalIncome) * 100);
+  const chartConfig = useMemo(() => {
+    const config: ChartConfig = { value: { label: "Value" } };
+    const colors = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"];
+    chartData.forEach((item, index) => {
+      config[item.category] = {
+        label: item.category,
+        color: `hsl(var(--${colors[index % colors.length]}))`,
+      };
+    });
+    return config;
+  }, [chartData]);
+
+
+  const budgetUsage = summary.totalIncome > 0 
+    ? Math.round((summary.totalExpenses / summary.totalIncome) * 100)
+    : 0;
+
+  const handleAddTransaction = (newTx: Omit<Transaction, 'id' | 'type' | 'icon'> & {type?: 'debit' | 'credit'}) => {
+    const fullTransaction: Transaction = {
+      ...newTx,
+      id: new Date().toISOString(),
+      type: newTx.category === 'Income' ? 'credit' : 'debit',
+      icon: iconMap[newTx.category] || ShoppingBag,
+    };
+    setTransactions(prev => [fullTransaction, ...prev]);
+  };
+  
+  const handleDeleteTransaction = (id: string) => {
+    setTransactions(prev => prev.filter(tx => tx.id !== id));
+  };
+
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
@@ -135,13 +210,24 @@ export default function DashboardPage() {
               <CardContent className="flex flex-col gap-6">
                 <BudgetProgress value={budgetUsage} />
                 <div className="h-[280px] w-full">
-                  <SpendingChart data={chartData} config={chartConfig} />
+                   {chartData.length > 0 ? (
+                    <SpendingChart data={chartData} config={chartConfig} />
+                   ) : (
+                     <div className="flex h-full items-center justify-center text-muted-foreground">
+                       No expense data to display.
+                     </div>
+                   )}
                 </div>
               </CardContent>
             </Card>
           </div>
           <div className="lg:col-span-2">
-            <TransactionList transactions={transactionData} />
+            <TransactionList 
+              transactions={transactions} 
+              onAddTransaction={handleAddTransaction}
+              onDeleteTransaction={handleDeleteTransaction}
+              iconMap={iconMap}
+            />
           </div>
         </div>
 
@@ -150,3 +236,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

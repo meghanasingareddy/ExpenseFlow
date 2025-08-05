@@ -33,6 +33,7 @@ const categories = [
   "Utilities",
   "Health",
   "Shopping",
+  "Daily",
   "Income",
   "Other",
 ];
@@ -104,9 +105,16 @@ export default function AddTransactionDialog({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!open) {
+        onClose();
+        setSuggestions([]);
+      } else {
+        // Reset form state when dialog opens
+        setMerchant("");
+        setAmount("");
+        setDate(new Date().toISOString().split("T")[0]);
+        setCategory("");
         setSuggestions([]);
       }
-      onClose();
     }}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
