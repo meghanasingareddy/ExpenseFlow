@@ -15,7 +15,7 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const TransactionSchema = z.object({
-  merchant: z.string().describe('The name of the merchant or where the transaction occurred.'),
+  merchant: z.string().describe('The name of the merchant or a description of the expense, like "groceries" or "transport".'),
   amount: z.number().describe('The monetary value of the transaction.'),
   date: z.string().describe('The date of the transaction in YYYY-MM-DD format.'),
   type: z.enum(['debit', 'credit']).describe('The type of transaction (debit or credit).'),
@@ -24,7 +24,7 @@ const TransactionSchema = z.object({
 export type Transaction = z.infer<typeof TransactionSchema>;
 
 const ExtractTransactionsInputSchema = z.object({
-  text: z.string().describe('A block of text, potentially containing one or more transaction descriptions, like from an SMS message.'),
+  text: z.string().describe('A block of text, potentially containing one or more transaction descriptions, like from an SMS message or user input.'),
 });
 
 export type ExtractTransactionsInput = z.infer<typeof ExtractTransactionsInputSchema>;
@@ -44,7 +44,9 @@ export async function extractTransactionsFromText(input: ExtractTransactionsInpu
     output: {
       schema: ExtractTransactionsOutputSchema,
     },
-    prompt: `You are an expert at parsing financial text messages. Analyze the following text and extract all transaction details. For each transaction, identify the merchant, amount, date, and whether it was a debit (money spent) or credit (money received). Today is {{currentDate}}.
+    prompt: `You are an expert at parsing financial text. Analyze the following text and extract all transaction details. For each transaction, identify the merchant or description, amount, date, and whether it was a debit (money spent) or credit (money received). Today is {{currentDate}}.
+
+If a specific merchant name isn't available, use the category of the expense (e.g., "Groceries", "Transport", "Snacks") as the merchant name. Phrases like "spent", "paid for", or "bought" indicate a debit.
 
   Text to analyze:
   {{{text}}}
