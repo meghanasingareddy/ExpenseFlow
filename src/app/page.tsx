@@ -164,18 +164,21 @@ export default function DashboardPage() {
   const chartConfig = useMemo(() => {
     const config: ChartConfig = { value: { label: "Value" } };
     const availableColors = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"];
-    let colorIndex = 0;
-
+    const usedColors = new Set(Object.values(categoryColorMap));
+    
     chartData.forEach((item) => {
       let colorVar: string;
       if (categoryColorMap[item.category]) {
         colorVar = categoryColorMap[item.category];
       } else {
-        // Find a color that's not already used by the mapped categories
-        do {
-          colorVar = availableColors[colorIndex % availableColors.length];
-          colorIndex++;
-        } while (Object.values(categoryColorMap).includes(colorVar) && colorIndex < availableColors.length * 2);
+        const unusedColor = availableColors.find(c => !usedColors.has(c));
+        if (unusedColor) {
+            colorVar = unusedColor;
+            usedColors.add(unusedColor);
+        } else {
+            // Fallback if all colors are used
+            colorVar = availableColors[Math.floor(Math.random() * availableColors.length)];
+        }
       }
       
       config[item.category] = {
