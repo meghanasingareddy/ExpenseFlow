@@ -2,11 +2,6 @@ import {
   Wallet,
   TrendingUp,
   TrendingDown,
-  ShoppingBag,
-  Utensils,
-  Clapperboard,
-  Home,
-  Heart,
 } from "lucide-react";
 import Header from "@/components/dashboard/header";
 import SummaryCard from "@/components/dashboard/summary-card";
@@ -76,7 +71,6 @@ export default function DashboardPage() {
   const transactionData = [
     {
       id: "1",
-      icon: ShoppingBag,
       title: "Grocery Store",
       date: "2024-07-25",
       value: "-₹2,500",
@@ -84,7 +78,6 @@ export default function DashboardPage() {
     },
     {
       id: "2",
-      icon: Utensils,
       title: "Restaurant",
       date: "2024-07-24",
       value: "-₹1,200",
@@ -92,7 +85,6 @@ export default function DashboardPage() {
     },
     {
       id: "3",
-      icon: Clapperboard,
       title: "Movie Tickets",
       date: "2024-07-23",
       value: "-₹800",
@@ -100,7 +92,6 @@ export default function DashboardPage() {
     },
     {
       id: "4",
-      icon: Home,
       title: "Rent Payment",
       date: "2024-07-22",
       value: "-₹10,000",
@@ -108,7 +99,6 @@ export default function DashboardPage() {
     },
     {
       id: "5",
-      icon: Heart,
       title: "Pharmacy",
       date: "2024-07-21",
       value: "-₹500",

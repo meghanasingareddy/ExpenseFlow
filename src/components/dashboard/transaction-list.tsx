@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { PlusCircle, Trash2, ShoppingBag, Utensils, Clapperboard, Home, Heart } from "lucide-react";
+import { PlusCircle, Trash2, ShoppingBag, Utensils, Clapperboard, Home, Heart, TrendingUp } from "lucide-react";
 import AddTransactionDialog from "./add-transaction-dialog";
 import Link from 'next/link';
 import {
@@ -41,7 +42,6 @@ interface Transaction {
 interface TransactionListProps {
   transactions: {
     id: string;
-    icon: LucideIcon;
     title: string;
     date: string;
     value: string;
@@ -59,7 +59,6 @@ const iconMap: { [key: string]: LucideIcon } = {
   Other: ShoppingBag,
   Income: TrendingUp,
 };
-import { TrendingUp } from "lucide-react";
 
 
 export default function TransactionList({
@@ -72,12 +71,13 @@ export default function TransactionList({
       amount: parseFloat(t.value.replace(/[^0-9.-]+/g,"")),
       type: t.value.startsWith('-') ? 'debit' : 'credit' as 'debit' | 'credit',
       merchant: t.title,
+      icon: iconMap[t.category] || ShoppingBag
     }))
   );
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const handleAddTransaction = (newTx: { merchant: string; amount: number; date: string; category: string; }) => {
-    const fullTransaction = {
+    const fullTransaction: Transaction = {
       ...newTx,
       id: new Date().toISOString(),
       icon: iconMap[newTx.category] || ShoppingBag,
