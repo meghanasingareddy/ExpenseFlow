@@ -10,31 +10,21 @@ export default function Header() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const theme = localStorage.getItem("theme");
-    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (theme === "dark" || (!theme && systemPrefersDark)) {
-      setIsDarkMode(true);
-    } else {
-      setIsDarkMode(false);
-    }
+    // We need to check the theme from the document on the client-side
+    // to correctly set the initial state of the switch.
+    setIsDarkMode(document.documentElement.classList.contains('dark'));
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (mounted) {
-      if (isDarkMode) {
-        document.documentElement.classList.add("dark");
-        localStorage.setItem("theme", "dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-        localStorage.setItem("theme", "light");
-      }
-    }
-  }, [isDarkMode, mounted]);
-
-
   const toggleTheme = (checked: boolean) => {
     setIsDarkMode(checked);
+    if (checked) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
   };
 
   if (!mounted) {
