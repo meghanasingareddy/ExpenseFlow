@@ -10,7 +10,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 
 const SuggestMerchantsInputSchema = z.object({
   query: z.string().describe('The partial merchant name entered by the user.'),

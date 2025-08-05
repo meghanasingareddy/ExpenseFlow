@@ -12,7 +12,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 
 const TransactionSchema = z.object({
   merchant: z.string().describe('The name of the merchant or where the transaction occurred.'),
