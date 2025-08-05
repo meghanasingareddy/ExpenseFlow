@@ -90,10 +90,10 @@ const iconMap: { [key: string]: LucideIcon } = {
 };
 
 const categoryColorMap: { [key: string]: string } = {
-  Rent: "chart-4",
+  Rent: "chart-3",
   Groceries: "chart-1",
   Food: "chart-2",
-  Entertainment: "chart-3",
+  Entertainment: "chart-4",
   Health: "chart-5",
 };
 
