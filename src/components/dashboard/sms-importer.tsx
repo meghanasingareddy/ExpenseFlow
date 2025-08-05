@@ -116,7 +116,7 @@ export default function SmsImporter({ onTransactionsExtracted }: SmsImporterProp
       <CardContent className="flex-grow flex flex-col gap-4">
         <Textarea
           id="messageInput"
-          placeholder="Write message here... e.g., Paid ₹550 to Swiggy on 3rd August"
+          placeholder="Write message here..."
           className="h-32"
           value={text}
           onChange={(e) => setText(e.target.value)}
