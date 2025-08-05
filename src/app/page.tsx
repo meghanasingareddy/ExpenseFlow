@@ -14,7 +14,6 @@ import BudgetProgress from "@/components/dashboard/budget-progress";
 import SpendingChart from "@/components/dashboard/spending-chart";
 import TransactionList from "@/components/dashboard/transaction-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import AIInsights from "@/components/dashboard/ai-insights";
 import type { ChartConfig } from "@/components/ui/chart";
 import SmsImporter from "@/components/dashboard/sms-importer";
 
@@ -23,29 +22,29 @@ export default function DashboardPage() {
     {
       icon: Wallet,
       title: "Total Balance",
-      value: "₹1,20,500",
+      value: "₹59,500",
       subtitle: "+2.5% from last month",
     },
     {
       icon: TrendingUp,
       title: "Income",
-      value: "₹50,000",
+      value: "₹25,000",
       subtitle: "Monthly salary",
     },
     {
       icon: TrendingDown,
       title: "Expenses",
-      value: "₹40,000",
+      value: "₹15,500",
       subtitle: "-10.1% from last month",
     },
   ];
 
   const chartData = [
-    { category: "Groceries", value: 8000, label: "Groceries" },
-    { category: "Rent", value: 20000, label: "Rent" },
-    { category: "Entertainment", value: 5000, label: "Entertainment" },
-    { category: "Transport", value: 3000, label: "Transport" },
-    { category: "Utilities", value: 4000, label: "Utilities" },
+    { category: "Groceries", value: 3500, label: "Groceries" },
+    { category: "Rent", value: 10000, label: "Rent" },
+    { category: "Entertainment", value: 1000, label: "Entertainment" },
+    { category: "Transport", value: 500, label: "Transport" },
+    { category: "Utilities", value: 500, label: "Utilities" },
   ];
 
   const chartConfig = {
@@ -76,39 +75,49 @@ export default function DashboardPage() {
 
   const transactionData = [
     {
+      id: "1",
       icon: ShoppingBag,
       title: "Grocery Store",
       date: "2024-07-25",
       value: "-₹2,500",
+      category: "Groceries",
     },
     {
+      id: "2",
       icon: Utensils,
       title: "Restaurant",
       date: "2024-07-24",
       value: "-₹1,200",
+      category: "Food",
     },
     {
+      id: "3",
       icon: Clapperboard,
       title: "Movie Tickets",
       date: "2024-07-23",
       value: "-₹800",
+      category: "Entertainment",
     },
     {
+      id: "4",
       icon: Home,
       title: "Rent Payment",
       date: "2024-07-22",
-      value: "-₹20,000",
+      value: "-₹10,000",
+      category: "Rent",
     },
     {
+      id: "5",
       icon: Heart,
       title: "Pharmacy",
       date: "2024-07-21",
       value: "-₹500",
+      category: "Health",
     },
   ];
 
   const totalExpenses = chartData.reduce((acc, curr) => acc + curr.value, 0);
-  const totalIncome = 50000;
+  const totalIncome = 25000;
   const budgetUsage = Math.round((totalExpenses / totalIncome) * 100);
 
   return (
@@ -146,10 +155,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <AIInsights />
-          <SmsImporter />
-        </div>
+        <SmsImporter />
       </main>
     </div>
   );

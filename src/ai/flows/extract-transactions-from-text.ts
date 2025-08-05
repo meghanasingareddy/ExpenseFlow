@@ -36,35 +36,34 @@ const ExtractTransactionsOutputSchema = z.object({
 export type ExtractTransactionsOutput = z.infer<typeof ExtractTransactionsOutputSchema>;
 
 export async function extractTransactionsFromText(input: ExtractTransactionsInput): Promise<ExtractTransactionsOutput> {
-  return extractTransactionsFlow(input);
-}
-
-const prompt = ai.definePrompt({
-  name: 'extractTransactionsPrompt',
-  input: {
-    schema: ExtractTransactionsInputSchema,
-  },
-  output: {
-    schema: ExtractTransactionsOutputSchema,
-  },
-  prompt: `You are an expert at parsing financial text messages. Analyze the following text and extract all transaction details. For each transaction, identify the merchant, amount, date, and whether it was a debit (money spent) or credit (money received). Today is {{currentDate}}.
+  const prompt = ai.definePrompt({
+    name: 'extractTransactionsPrompt',
+    input: {
+      schema: ExtractTransactionsInputSchema,
+    },
+    output: {
+      schema: ExtractTransactionsOutputSchema,
+    },
+    prompt: `You are an expert at parsing financial text messages. Analyze the following text and extract all transaction details. For each transaction, identify the merchant, amount, date, and whether it was a debit (money spent) or credit (money received). Today is {{currentDate}}.
 
   Text to analyze:
   {{{text}}}
 
   Return the data as a structured JSON object.
   `,
-});
+  });
 
-const extractTransactionsFlow = ai.defineFlow(
-  {
-    name: 'extractTransactionsFlow',
-    inputSchema: ExtractTransactionsInputSchema,
-    outputSchema: ExtractTransactionsOutputSchema,
-  },
-  async (input) => {
-    const currentDate = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD format
-    const { output } = await prompt({ ...input, currentDate });
-    return output!;
-  }
-);
+  const extractTransactionsFlow = ai.defineFlow(
+    {
+      name: 'extractTransactionsFlow',
+      inputSchema: ExtractTransactionsInputSchema,
+      outputSchema: ExtractTransactionsOutputSchema,
+    },
+    async (input) => {
+      const currentDate = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD format
+      const { output } = await prompt({ ...input, currentDate });
+      return output!;
+    }
+  );
+  return extractTransactionsFlow(input);
+}

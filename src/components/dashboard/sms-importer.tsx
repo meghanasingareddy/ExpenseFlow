@@ -63,7 +63,7 @@ export default function SmsImporter() {
           <span>Import from Text</span>
         </CardTitle>
         <CardDescription>
-          Paste in messages to automatically extract transaction data using AI.
+          Paste in messages to automatically extract transaction data.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4">
