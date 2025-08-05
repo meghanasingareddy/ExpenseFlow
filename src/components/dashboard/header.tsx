@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, IndianRupee } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import { DollarSign } from 'lucide-react';
 
 export default function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -43,7 +42,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
       <div className="flex items-center gap-2">
-        <DollarSign className="h-6 w-6 text-primary" />
+        <IndianRupee className="h-6 w-6 text-primary" />
         <h1 className="text-xl font-semibold tracking-tight">ExpenseWise</h1>
       </div>
       <div className="flex items-center space-x-2">

@@ -21,29 +21,29 @@ export default function DashboardPage() {
     {
       icon: Wallet,
       title: "Total Balance",
-      value: "$12,345.67",
+      value: "₹1,028,805.59",
       subtitle: "+2.5% from last month",
     },
     {
       icon: TrendingUp,
       title: "Income",
-      value: "$5,000.00",
+      value: "₹400,000.00",
       subtitle: "Monthly salary",
     },
     {
       icon: TrendingDown,
       title: "Expenses",
-      value: "$1,890.43",
+      value: "₹151,234.40",
       subtitle: "-10.1% from last month",
     },
   ];
 
   const chartData = [
-    { category: "Groceries", value: 400, fill: "var(--chart-1)" },
-    { category: "Rent", value: 1500, fill: "var(--chart-2)" },
-    { category: "Entertainment", value: 250, fill: "var(--chart-3)" },
-    { category: "Transport", value: 150, fill: "var(--chart-4)" },
-    { category: "Utilities", value: 200, fill: "var(--chart-5)" },
+    { category: "Groceries", value: 32000, fill: "var(--chart-1)" },
+    { category: "Rent", value: 120000, fill: "var(--chart-2)" },
+    { category: "Entertainment", value: 20000, fill: "var(--chart-3)" },
+    { category: "Transport", value: 12000, fill: "var(--chart-4)" },
+    { category: "Utilities", value: 16000, fill: "var(--chart-5)" },
   ];
 
   const transactionData = [
@@ -51,31 +51,31 @@ export default function DashboardPage() {
       icon: ShoppingBag,
       title: "Grocery Store",
       date: "2024-07-25",
-      value: "-$78.50",
+      value: "-₹6,280.00",
     },
     {
       icon: Utensils,
       title: "Restaurant",
       date: "2024-07-24",
-      value: "-$45.20",
+      value: "-₹3,616.00",
     },
     {
       icon: Clapperboard,
       title: "Movie Tickets",
       date: "2024-07-23",
-      value: "-$30.00",
+      value: "-₹2,400.00",
     },
     {
       icon: Home,
       title: "Rent Payment",
       date: "2024-07-22",
-      value: "-$1200.00",
+      value: "-₹96,000.00",
     },
     {
       icon: Heart,
       title: "Pharmacy",
       date: "2024-07-21",
-      value: "-$22.75",
+      value: "-₹1,820.00",
     },
   ];
 
