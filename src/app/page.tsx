@@ -93,7 +93,7 @@ const categoryColorMap: { [key: string]: string } = {
   Rent: "chart-2",
   Groceries: "chart-1",
   Food: "chart-4",
-  Entertainment: "chart-3",
+  Entertainment: "chart-5",
   Health: "chart-3",
 };
 
