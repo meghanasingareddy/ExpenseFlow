@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   Wallet,
   TrendingUp,
@@ -89,6 +89,14 @@ const iconMap: { [key: string]: LucideIcon } = {
   Income: TrendingUp,
 };
 
+const categoryColorMap: { [key: string]: string } = {
+  Rent: "chart-4",
+  Groceries: "chart-1",
+  Food: "chart-2",
+  Entertainment: "chart-3",
+  Health: "chart-5",
+};
+
 
 export default function DashboardPage() {
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
@@ -155,11 +163,24 @@ export default function DashboardPage() {
 
   const chartConfig = useMemo(() => {
     const config: ChartConfig = { value: { label: "Value" } };
-    const colors = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"];
-    chartData.forEach((item, index) => {
+    const availableColors = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"];
+    let colorIndex = 0;
+
+    chartData.forEach((item) => {
+      let colorVar: string;
+      if (categoryColorMap[item.category]) {
+        colorVar = categoryColorMap[item.category];
+      } else {
+        // Find a color that's not already used by the mapped categories
+        do {
+          colorVar = availableColors[colorIndex % availableColors.length];
+          colorIndex++;
+        } while (Object.values(categoryColorMap).includes(colorVar) && colorIndex < availableColors.length * 2);
+      }
+      
       config[item.category] = {
         label: item.category,
-        color: `hsl(var(--${colors[index % colors.length]}))`,
+        color: `hsl(var(--${colorVar}))`,
       };
     });
     return config;
@@ -236,4 +257,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
