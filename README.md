@@ -13,7 +13,7 @@ A modern, AI-powered personal finance dashboard built with Next.js 15 and Fireba
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 <p align="center">
   <img src="docs/dashboard-dark.png" alt="ExpenseFlow Dashboard" width="100%" />
@@ -27,7 +27,7 @@ A modern, AI-powered personal finance dashboard built with Next.js 15 and Fireba
 
 ---
 
-## 🌟 What is ExpenseFlow?
+## What is ExpenseFlow?
 
 ExpenseFlow is an intelligent personal finance tracker designed to eliminate the friction of logging daily expenses. Instead of manually filling out tedious forms for every purchase, ExpenseFlow leverages AI to parse natural language input. 
 
@@ -41,7 +41,7 @@ Whether you're pasting a bank SMS, typing a quick note, or copying an email rece
 
 ---
 
-## 🧠 How We Extract Transactions
+## How We Extract Transactions
 
 The transaction extraction is powered by a server-side AI flow built with **Firebase Genkit**:
 
@@ -57,7 +57,7 @@ The transaction extraction is powered by a server-side AI flow built with **Fire
 
 ---
 
-## 🚀 Features
+## Features
 
 - **Financial Dashboard** — At-a-glance view of total balance, income, and expenses with trend indicators.
 - **Spending Breakdown** — Interactive donut chart powered by Recharts for category-wise spending visualization.
@@ -70,7 +70,7 @@ The transaction extraction is powered by a server-side AI flow built with **Fire
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -83,7 +83,7 @@ The transaction extraction is powered by a server-side AI flow built with **Fire
 
 ---
 
-## 💻 Getting Started (Local Development)
+## Getting Started (Local Development)
 
 ### Prerequisites
 
@@ -112,13 +112,13 @@ The app will be available at [http://localhost:9002](http://localhost:9002).
 
 ---
 
-## 🌐 Deployment
+## Deployment
 
 This project is deployed on **Vercel** at [expense-flow-rose.vercel.app](https://expense-flow-rose.vercel.app). 
 To deploy your own instance, connect your GitHub repository to Vercel and ensure the `GOOGLE_API_KEY` is added to your Vercel Environment Variables.
 
 ---
 
-## 📄 License
+## License
 
 This project is open source and available under the [MIT License](LICENSE).
